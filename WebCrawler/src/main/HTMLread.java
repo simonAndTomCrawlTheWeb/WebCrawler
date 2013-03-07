@@ -1,12 +1,11 @@
-/**
- * 
- */
+
 package main;
 
 import java.io.InputStream;
 
 /**
- * @author tomAndSimon
+ * @author tomAndSimon 
+ * 
  *
  */
 public interface HTMLread {
