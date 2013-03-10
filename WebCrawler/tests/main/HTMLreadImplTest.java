@@ -38,7 +38,28 @@ public class HTMLreadImplTest {
 		assertTrue(result1);
 		assertTrue(result2);
 	}
-
+	
+	@Test
+	public void readStringTest() {
+		InputStream stream1 = null;
+		InputStream stream2 = null;
+		HTMLread myReader = new HTMLreadImpl(); 
+		try {
+			URL mySite1 = new URL("http://www.google.co.uk");
+			URL mySite2 = new URL("http://www.telegraph.co.uk/");
+			stream1 = mySite1.openStream();
+			stream2 = mySite2.openStream();
+		} catch (MalformedURLException ex){
+			System.out.println("Malformed...");			
+		} catch (IOException ex) {
+			System.out.println("IO problem...");		
+		}
+		String result1 = myReader.readString(stream1, 'i', 'z');
+		String result2 = myReader.readString(stream2, 'h', 'm');
+		assertEquals(result1,"<!doctype html><html i");
+		assertEquals(result2,"<!DOCTYPE h");
+	}
+/*
 	@Test
 	public void skipSpaceTest() {
 		String str = "        x";
@@ -48,4 +69,5 @@ public class HTMLreadImplTest {
 		assertEquals('x', myReader.skipSpace(stream, 'y'));
 		assertEquals(Character.MIN_VALUE, myReader.skipSpace(stream, 'x'));
 	}
+*/
 }
