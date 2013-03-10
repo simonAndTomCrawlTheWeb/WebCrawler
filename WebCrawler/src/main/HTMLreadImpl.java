@@ -36,6 +36,7 @@ public class HTMLreadImpl implements HTMLread {
 			}
 		} catch (IOException ex) {
 			System.out.println("IO exception...");
+			ex.printStackTrace();
 		} finally {
 			closeReader(in);
 		}
@@ -47,23 +48,28 @@ public class HTMLreadImpl implements HTMLread {
 	public char skipSpace(InputStream stream, char ch) {
 		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 		char nextCharacter;
+		char result = Character.MIN_VALUE;
 		try {
 			while ((nextCharacter = (char) in.read()) != -1) {
+				System.out.println(nextCharacter);
 				if(Character.isWhitespace(nextCharacter)) {
 					continue;
 				} else {
 					if (nextCharacter == ch) {
-						return Character.MIN_VALUE;
+						break;
 					}
-					return nextCharacter;
+					result = nextCharacter;
+					break;
 				}
 				
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException ex) {
+			System.out.println("IO exception...");
+			ex.printStackTrace();
+		} finally {
+			closeReader(in);
 		}
-		return Character.MIN_VALUE;
+		return result;
 	}
 
 	/* (non-Javadoc)

@@ -41,7 +41,11 @@ public class HTMLreadImplTest {
 
 	@Test
 	public void skipSpaceTest() {
-		String str = "        x";
+		char ch = (char) 65535;
+		System.out.println(ch);
+		System.out.println((int)'?');
+		
+		String str = "        y";
 		InputStream stream = new ByteArrayInputStream(str.getBytes());
 		HTMLread myReader = new HTMLreadImpl();
 		
