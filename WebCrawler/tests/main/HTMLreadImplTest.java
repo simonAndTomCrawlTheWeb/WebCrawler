@@ -59,19 +59,27 @@ public class HTMLreadImplTest {
 		assertEquals(result1,"<!doctype html><html i");
 		assertEquals(result2,"<!DOCTYPE h");
 	}
-/*
+	
 	@Test
-	public void skipSpaceTest() {
-		char ch = (char) 65535;
-		System.out.println(ch);
-		System.out.println((int)'?');
-		
-		String str = "        y";
+	public void skipSpaceTest() throws Exception {
+		String str = "  x  ";
 		InputStream stream = new ByteArrayInputStream(str.getBytes());
 		HTMLread myReader = new HTMLreadImpl();
-		
 		assertEquals('x', myReader.skipSpace(stream, 'y'));
+	
+		stream = new ByteArrayInputStream(str.getBytes());
 		assertEquals(Character.MIN_VALUE, myReader.skipSpace(stream, 'x'));
 	}
-*/
+
+	@Test
+	public void skipSpaceTest2() throws Exception {
+		HTMLread myReader = new HTMLreadImpl();
+		URL mySite = new URL("http://www.guardian.co.uk/"); // Helpfully provides ample whitespace ahead of first '<'
+		InputStream stream = mySite.openStream();
+		
+		assertEquals('<', myReader.skipSpace(stream, 'D'));
+		
+		stream = mySite.openStream();
+		assertEquals(Character.MIN_VALUE, myReader.skipSpace(stream, '<'));
+		}
 }

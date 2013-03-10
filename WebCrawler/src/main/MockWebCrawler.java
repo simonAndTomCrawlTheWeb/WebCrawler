@@ -3,8 +3,6 @@
  */
 package main;
 
-import java.net.URL;
-
 /**
  * An mock implementation of search() for use in testing.
  * 

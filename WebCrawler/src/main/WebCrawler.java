@@ -56,7 +56,7 @@ public abstract class WebCrawler {
 		URL url = new URL(urlStr);
 		InputStream stream = url.openStream();
 		
-		reader.readUntil(stream, '<', );
+		//reader.readUntil(stream, '<', );
 		
 		
 		
