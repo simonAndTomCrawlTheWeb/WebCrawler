@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 /**
@@ -38,4 +39,13 @@ public class HTMLreadImplTest {
 		assertTrue(result2);
 	}
 
+	@Test
+	public void skipSpaceTest() {
+		String str = "        x";
+		InputStream stream = new ByteArrayInputStream(str.getBytes());
+		HTMLread myReader = new HTMLreadImpl();
+		
+		assertEquals('x', myReader.skipSpace(stream, 'y'));
+		assertEquals(Character.MIN_VALUE, myReader.skipSpace(stream, 'x'));
+	}
 }

@@ -25,7 +25,7 @@ public class HTMLreadImpl implements HTMLread {
 		boolean result = false;
 		try {
 			while ((nextCharacter = (char) in.read()) != -1) {
-				System.out.println(nextCharacter);
+				// System.out.println(nextCharacter);
 				if (nextCharacter == ch1) {
 					result = true;
 					break;
@@ -42,13 +42,28 @@ public class HTMLreadImpl implements HTMLread {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see main.HTMLread#skipSpace(java.io.InputStream, char)
-	 */
+
 	@Override
 	public char skipSpace(InputStream stream, char ch) {
-		// TODO Auto-generated method stub
-		return 0;
+		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+		char nextCharacter;
+		try {
+			while ((nextCharacter = (char) in.read()) != -1) {
+				if(Character.isWhitespace(nextCharacter)) {
+					continue;
+				} else {
+					if (nextCharacter == ch) {
+						return Character.MIN_VALUE;
+					}
+					return nextCharacter;
+				}
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Character.MIN_VALUE;
 	}
 
 	/* (non-Javadoc)
