@@ -14,7 +14,7 @@ import java.net.URL;
 public class MockWebCrawler extends WebCrawler {
 
 	@Override
-	boolean search(URL url) {
+	boolean search(String url) {
 		if(url.toString().equals("http://en.wikipedia.org/wiki/Spider")) {
 			return true;
 		}

@@ -17,18 +17,14 @@ import org.junit.Test;
 public class WebCrawlerTest {
 	
 	private WebCrawler crawler;
-	private URL urlTrue;
-	private URL urlFalse;
-	private String urlStrTrue;
-	private String urlStrFalse;
+	private String urlTrue;
+	private String urlFalse;
 
 	@Before
 	public void setUp() throws Exception {
 		crawler = new MockWebCrawler();
-		urlStrTrue = "http://en.wikipedia.org/wiki/Spider";
-		urlStrFalse = "http://en.wikipedia.org/wiki/Arachnophobia";
-		urlTrue = new URL(urlStrTrue);
-		urlFalse = new URL(urlStrFalse);
+		urlTrue = "http://en.wikipedia.org/wiki/Spider";
+		urlFalse = "http://en.wikipedia.org/wiki/Arachnophobia";
 	}
 
 	@Test
