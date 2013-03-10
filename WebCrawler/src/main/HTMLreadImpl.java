@@ -77,7 +77,29 @@ public class HTMLreadImpl implements HTMLread {
 	 */
 	@Override
 	public String readString(InputStream stream, char ch1, char ch2) {
-		// TODO Auto-generated method stub
+		boolean foundCh1 = false;
+		StringBuffer whatIsRead = new StringBuffer();
+		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+		char nextCharacter;
+		try {
+			while ((nextCharacter = (char) in.read()) != -1) {
+				whatIsRead.append(nextCharacter);
+				if (nextCharacter == ch1) {
+					foundCh1 = true;
+					break;
+				} 
+				if (nextCharacter == ch2) {
+					break;
+				}
+			}
+		} catch (IOException ex) {
+			System.out.println("IO exception...");
+		} finally {
+			closeReader(in);
+		}		
+		if (foundCh1) {
+			return whatIsRead.toString();
+		}
 		return null;
 	}
 	
