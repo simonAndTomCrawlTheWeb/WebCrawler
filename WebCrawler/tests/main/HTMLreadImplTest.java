@@ -56,8 +56,8 @@ public class HTMLreadImplTest {
 		}
 		String result1 = myReader.readString(stream1, 'i', 'z');
 		String result2 = myReader.readString(stream2, 'h', 'm');
-		assertEquals(result1,"<!doctype html><html i");
-		assertEquals(result2,"<!DOCTYPE h");
+		assertEquals("<!doctype html><html i", result1);
+		assertEquals("<!DOCTYPE h", result2);
 	}
 	
 	@Test
