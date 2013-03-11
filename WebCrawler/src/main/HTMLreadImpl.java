@@ -69,7 +69,7 @@ public class HTMLreadImpl implements HTMLread {
 	@Override
 	public String readString(InputStream stream, char ch1, char ch2) {
 		boolean foundCh1 = false;
-		StringBuffer whatIsRead = new StringBuffer();
+		StringBuilder whatIsRead = new StringBuilder();
 		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 		char nextCharacter;
 		try {
