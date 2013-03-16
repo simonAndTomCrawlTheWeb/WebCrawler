@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import main.HTMLreadImpl;
 /**
@@ -18,8 +19,8 @@ import main.HTMLreadImpl;
  *
  */
 public abstract class WebCrawler {
-
-	private HTMLread reader = new HTMLreadImpl();
+	
+	//private HTMLread reader = new HTMLreadImpl(); DO WE NEED THIS?
 	
 	private final static int DEFAULT_MAX_LINKS = 100;
 	private final static int DEFAULT_MAX_DEPTH = 10;
@@ -38,27 +39,26 @@ public abstract class WebCrawler {
 		this.maxLinks = maxLinks;
 	}
 
-	public final void crawl(String url) {
+	public final void crawl(String url /*needs 'database' info parameter*/) {
 		try {
 			processPage(url);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Not a well-formed URL...");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("There was an I/O problem...");
 			e.printStackTrace();
 		}
 		
-		search(url);
+		boolean result = search(url);
+		if (result) {
+			storeResult(url);
+		}
 	}
 	
 	private void processPage(String urlStr) throws IOException, MalformedURLException {
 		URL url = new URL(urlStr);
 		InputStream stream = url.openStream();
-		
-		//reader.readUntil(stream, '<', );
-		
-		
 		
 	}
 

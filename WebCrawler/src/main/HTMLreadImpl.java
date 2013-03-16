@@ -15,14 +15,12 @@ import java.io.Reader;
  */
 public class HTMLreadImpl implements HTMLread {
 
-	@Override
 	public boolean readUntil(InputStream stream, char ch1, char ch2) {
 		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 		char nextCharacter;
 		boolean result = false;
 		try {
 			while ((nextCharacter = (char) in.read()) != -1) {
-				// System.out.println(nextCharacter);
 				if (nextCharacter == ch1) {
 					result = true;
 					break;
@@ -40,7 +38,7 @@ public class HTMLreadImpl implements HTMLread {
 		return result;
 	}
 
-	@Override
+
 	public char skipSpace(InputStream stream, char ch) {
 		BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 		char nextCharacter;
@@ -66,7 +64,7 @@ public class HTMLreadImpl implements HTMLread {
 		return result;
 	}
 
-	@Override
+
 	public String readString(InputStream stream, char ch1, char ch2) {
 		boolean foundCh1 = false;
 		StringBuilder whatIsRead = new StringBuilder();
@@ -85,6 +83,7 @@ public class HTMLreadImpl implements HTMLread {
 			}
 		} catch (IOException ex) {
 			System.out.println("IO exception...");
+			ex.printStackTrace();
 		} finally {
 			closeReader(in);
 		}		
@@ -101,6 +100,7 @@ public class HTMLreadImpl implements HTMLread {
 			}
 		} catch (IOException ex) {
 			System.out.println("IO problem when closing reader...");
+			ex.printStackTrace();
 		}
 	}
 }
