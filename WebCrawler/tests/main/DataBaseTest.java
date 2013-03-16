@@ -20,13 +20,13 @@ import org.junit.Test;
  */
 public class DataBaseTest {
 	
-	private DataBase db;
+	private Database db;
 	private String url = "this/is/a/pretend/link";
 	private String file = "serializeTest.ser";
 	
 	@Before
 	public void setUp() {
-		db = new DataBase();
+		db = new Database();
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class DataBaseTest {
 		
 		FileInputStream fileIn = new FileInputStream(file);
 		ObjectInputStream in = new ObjectInputStream(fileIn);
-		DataBase dbDeserialized = (DataBase) in.readObject();
+		Database dbDeserialized = (Database) in.readObject();
 		
 		assertTrue(dbDeserialized.getLinksToCrawl().get(0).contains(url));
 		assertTrue(dbDeserialized.getResults().contains(url));

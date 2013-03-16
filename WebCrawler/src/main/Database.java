@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class DataBase implements Serializable {
+public class Database implements Serializable {
 	private static final long serialVersionUID = 42L;
 	
 	private Map<Integer, LinkedList<String>> linksToCrawl = new HashMap<Integer, LinkedList<String>>();
@@ -24,6 +24,7 @@ public class DataBase implements Serializable {
 				linksToCrawl.put(priority, newList);
 			}
 		}
+		linksAdded.add(url);
 	}
 	
 	public void addResult(String url) {
