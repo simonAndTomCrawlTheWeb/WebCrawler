@@ -44,20 +44,19 @@ public abstract class WebCrawler {
 		}
 		
 		//Variables keep track of what needs to be crawled
-		int numberOfLinksFound = 0;
+		int numberOfLinksFound = 1;
 		int currentPriority = 0;
 		int index = 0;
-		
+		db.addLink(currentPriority,url);
+
 		while (currentPriority <= maxDepth && numberOfLinksFound < maxLinks) {
-			//Add link to be crawled
-			db.addLink(currentPriority,url);
-			
+
 			try {
 				Document htmlDoc = Jsoup.connect(url).get();
 				Elements allATags = htmlDoc.select("a[href]");
 				System.out.println("Number of A tags: " + allATags.size());
 				int i = 0;
-				while (i < allATags.size() && numberOfLinksFound < maxLinks) {
+				while ((i < allATags.size()) && (numberOfLinksFound < maxLinks)) {
 					db.addLink(currentPriority+1,allATags.get(i).attr("abs:href").toString());
 					numberOfLinksFound++;
 					i++;
