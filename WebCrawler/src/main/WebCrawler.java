@@ -32,7 +32,7 @@ public abstract class WebCrawler {
 	}
 	
 	/*
-	 * Would like to this recursively; but, started out
+	 * Would like to do this recursively; but, started out
 	 * by doing it iteratively- refactor later.
 	 */
 	public final void crawl(String url,String dbFile) {
@@ -59,6 +59,9 @@ public abstract class WebCrawler {
 					numberOfLinksFound++;
 					i++;
 				}
+			} catch (IllegalArgumentException ex) {
+				System.out.println("That was not a valid url..."); //Should this be kept in the index?
+				ex.printStackTrace();
 			} catch (IOException ex) {
 				System.out.println("There was an I/O problem...");
 				ex.printStackTrace();
@@ -67,7 +70,7 @@ public abstract class WebCrawler {
 			/*
 			 * 'Future programmers' search functionality
 			 */
-			boolean result = search(url);
+			boolean result = search(url); //Do we always want to hand the url over to search? See exceptions above.
 			if (result) {
 				db.addResult(url);
 			}

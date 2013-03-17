@@ -16,7 +16,7 @@ public class CrawlerDebugger {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		WebCrawler crawler = new MockWebCrawler(3,54);
+		WebCrawler crawler = new MockWebCrawler(3,2000);
 	    //crawler.crawl("http://en.wikipedia.org/wiki/Spider","WCTest.txt");
 	    crawler.crawl("https://github.com/simonAndTomCrawlTheWeb/WebCrawler","WCTest.txt");
 	    Database myDb = crawler.getDatabase();
@@ -32,14 +32,14 @@ public class CrawlerDebugger {
 	    for (String next: priorityOne) {
 	    	System.out.println("This is in priority 1:" + next);
 	    }
-	    /*
+	    
 	    LinkedList<String> priorityTwo = linksToCrawl.get(2);
 	    System.out.println("The size of the priority 2 linked list is:" + priorityTwo.size());
 	    System.out.println("***************");
 	    for (String each: priorityTwo) {
 	    	System.out.println("This is in priority 2:" + each);
 	    }
-	    */
+	    
 	    System.out.println("***********Links in total list");
 	    for (String next: myDb.getLinksAdded()) {
 	    	System.out.println(next);
