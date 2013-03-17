@@ -1,11 +1,16 @@
 
 package main;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -34,6 +39,8 @@ public abstract class WebCrawler {
 	/*
 	 * Would like to do this recursively; but, started out
 	 * by doing it iteratively- refactor later.
+	 * 
+	 * Currently it gets maxLinks non-unique links; maybe change.
 	 */
 	public final void crawl(String url,String dbFile) {
 		
@@ -90,6 +97,7 @@ public abstract class WebCrawler {
 				url = db.getLinksToCrawl().get(currentPriority).get(index);
 			}
 		}
+		writeDatabase(db);
 	}
 	
 	private void loadDatabase(File file) {
@@ -127,6 +135,27 @@ public abstract class WebCrawler {
 				}
 			}
 		}
+	}
+	
+	/*
+	 * Simple quick write method.
+	 * Redo when we understand the proper spec.
+	 */
+	private void writeDatabase(Database db) {
+	    try	{
+	        OutputStream file = new FileOutputStream( "database.txt");
+	        OutputStream buffer = new BufferedOutputStream(file);
+	        ObjectOutput output = new ObjectOutputStream(buffer);
+	        try	{
+	        	output.writeObject(db);
+	        }
+	        finally	{
+	        	output.close();
+	        }
+	     } catch(IOException ex) {
+	    	 System.out.println("Could not write file...");
+	    	 ex.printStackTrace();
+	     }
 	}
 
 	abstract boolean search(String url);

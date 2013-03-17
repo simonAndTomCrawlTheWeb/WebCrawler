@@ -14,10 +14,7 @@ public class Database implements Serializable {
 	private List<String> results = new LinkedList<String>();
 	
 	public void addLink(int priority, String url) {
-		/* Checks for duplicates!
-		 * Missed this as I did not read code properly.
-		 * Was trying to fix a bug that did not exist.
-		 */
+		
 		if(!linksAdded.contains(url)) {
 			if(linksToCrawl.containsKey(priority)) {
 				linksToCrawl.get(priority).add(url);
