@@ -33,9 +33,6 @@ public abstract class WebCrawler {
 	
 	public final void crawl(String url,String dbFile) {
 		
-		/*
-		 * Loads information from db file or creates an empty database
-		 */
 		File file = new File(dbFile); //What if dbFile is null? Handle NullPointerException?
 		if(file.exists() && file.isFile()) {
 			loadDatabase(file);	
@@ -43,14 +40,12 @@ public abstract class WebCrawler {
 			db = new Database();
 		}
 		
-		//Variables keep track of what needs to be crawled
 		int numberOfLinksFound = 1;
 		int currentPriority = 0;
 		int index = 0;
 		db.addLink(currentPriority,url);
 
 		while (currentPriority <= maxDepth && numberOfLinksFound < maxLinks) {
-
 			try {
 				Document htmlDoc = Jsoup.connect(url).get();
 				Elements allATags = htmlDoc.select("a[href]");
@@ -73,7 +68,6 @@ public abstract class WebCrawler {
 			}
 			
 			index++;
-			//Update priority and url to be crawled
 			if (index == db.getLinksToCrawl().get(currentPriority).size()) {
 				currentPriority++;
 				index = 0;

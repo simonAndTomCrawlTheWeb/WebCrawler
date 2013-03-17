@@ -32,15 +32,18 @@ public class CrawlerDebugger {
 	    for (String next: priorityOne) {
 	    	System.out.println("This is in priority 1:" + next);
 	    }
-	    
-	    
+	    /*
 	    LinkedList<String> priorityTwo = linksToCrawl.get(2);
 	    System.out.println("The size of the priority 2 linked list is:" + priorityTwo.size());
 	    System.out.println("***************");
 	    for (String each: priorityTwo) {
 	    	System.out.println("This is in priority 2:" + each);
 	    }
-	    
+	    */
+	    System.out.println("***********Links in total list");
+	    for (String next: myDb.getLinksAdded()) {
+	    	System.out.println(next);
+	    }
 	    System.out.println("Total Links Found: " + myDb.getLinksAdded().size());
 	}
 
