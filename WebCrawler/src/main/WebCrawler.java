@@ -55,6 +55,7 @@ public abstract class WebCrawler {
 			try {
 				Document htmlDoc = Jsoup.connect(url).get();
 				Elements allATags = htmlDoc.select("a[href]");
+				System.out.println("Number of A tags: " + allATags.size());
 				int i = 0;
 				while (i < allATags.size() && numberOfLinksFound < maxLinks) {
 					db.addLink(currentPriority+1,allATags.get(i).attr("abs:href").toString());
@@ -87,54 +88,6 @@ public abstract class WebCrawler {
 			}
 		}
 	}
-	
-	/*
-	private void crawl(String url,int priority,int index) {
-		
-		try {
-			Document htmlDoc = Jsoup.connect(url).get();
-			Elements allATags = htmlDoc.select("a[href]");
-			int i = 0;
-			int requiredLinks = maxLinks-db.getLinksAdded().size();
-			while (i < requiredLinks && (i < allATags.size())) {
-				db.addLink(priority,allATags.get(i).attr("abs:href").toString());
-				i++;
-			}
-		} catch (IOException ex) {
-			System.out.println("There was an I/O problem...");
-			ex.printStackTrace();
-		}
-		boolean result = search(url);
-		if (result) {
-			db.addResult(url);
-		}
-		if (db.getLinksAdded().size() >= maxLinks) {
-			System.out.println("here");
-			return;
-		}
-		index++;
-		if (index == db.getLinksToCrawl().get(priority).size()) {
-			if (db.getLinksToCrawl().size() == priority || priority == maxDepth) {
-				return;
-			} 
-			crawl(db.getLinksToCrawl().get(priority+1).get(0),priority+1,0);
-		} else {
-			crawl(db.getLinksToCrawl().get(priority).get(index),priority,index);
-		}
-	}
-
-	public final void crawl(String url, String dbFile) {
-		
-		File file = new File(dbFile); //What if dbFile is null? Handle NullPointerException?
-		if(file.exists() && file.isFile()) {
-			loadDatabase(file);	
-		} else {
-			db = new Database();
-		}
-		db.addLink(0,url);
-		crawl(url,1,0);
-	}
-	*/
 	
 	private void loadDatabase(File file) {
 		FileInputStream fileIn = null;
