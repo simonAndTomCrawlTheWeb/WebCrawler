@@ -10,6 +10,14 @@ package main;
  *
  */
 public class MockWebCrawler extends WebCrawler {
+	
+	public MockWebCrawler() {
+		super();
+	}
+
+	public MockWebCrawler(int i, int j) {
+		super(i,j);
+	}
 
 	@Override
 	boolean search(String url) {

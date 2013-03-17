@@ -40,4 +40,9 @@ public class Database implements Serializable {
 	public List<String> getResults() {
 		return results;
 	}
+	
+	//Added by Tom; perhaps find a way to crawl without using this?
+	public List<String> getLinksAdded() {
+		return linksAdded;
+	}
 }
