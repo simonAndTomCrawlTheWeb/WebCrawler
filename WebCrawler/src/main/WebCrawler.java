@@ -31,7 +31,66 @@ public abstract class WebCrawler {
 		this.maxLinks = maxLinks;
 	}
 	
+	public final void crawl(String url,String dbFile) {
+		
+		/*
+		 * Loads information from db file or creates an empty database
+		 */
+		File file = new File(dbFile); //What if dbFile is null? Handle NullPointerException?
+		if(file.exists() && file.isFile()) {
+			loadDatabase(file);	
+		} else {
+			db = new Database();
+		}
+		
+		//Variables keep track of what needs to be crawled
+		int numberOfLinksFound = 0;
+		int currentPriority = 0;
+		int index = 0;
+		
+		while (currentPriority <= maxDepth && numberOfLinksFound < maxLinks) {
+			//Add link to be crawled
+			db.addLink(currentPriority,url);
+			
+			try {
+				Document htmlDoc = Jsoup.connect(url).get();
+				Elements allATags = htmlDoc.select("a[href]");
+				int i = 0;
+				while (i < allATags.size() && numberOfLinksFound < maxLinks) {
+					db.addLink(currentPriority+1,allATags.get(i).attr("abs:href").toString());
+					numberOfLinksFound++;
+					i++;
+				}
+			} catch (IOException ex) {
+				System.out.println("There was an I/O problem...");
+				ex.printStackTrace();
+			}
+			
+			//'Future programmers' search functionality
+			boolean result = search(url);
+			if (result) {
+				db.addResult(url);
+			}
+			
+			index++;
+			//Update priority and url to be crawled
+			if (index == db.getLinksToCrawl().get(currentPriority).size()) {
+				currentPriority++;
+				index = 0;
+				if (db.getLinksToCrawl().get(currentPriority) != null) {
+					url = db.getLinksToCrawl().get(currentPriority).get(index);
+				} else {
+					numberOfLinksFound = maxLinks;
+				}
+			} else {
+				url = db.getLinksToCrawl().get(currentPriority).get(index);
+			}
+		}
+	}
+	
+	/*
 	private void crawl(String url,int priority,int index) {
+		
 		try {
 			Document htmlDoc = Jsoup.connect(url).get();
 			Elements allATags = htmlDoc.select("a[href]");
@@ -63,8 +122,9 @@ public abstract class WebCrawler {
 			crawl(db.getLinksToCrawl().get(priority).get(index),priority,index);
 		}
 	}
-	
+
 	public final void crawl(String url, String dbFile) {
+		
 		File file = new File(dbFile); //What if dbFile is null? Handle NullPointerException?
 		if(file.exists() && file.isFile()) {
 			loadDatabase(file);	
@@ -74,6 +134,7 @@ public abstract class WebCrawler {
 		db.addLink(0,url);
 		crawl(url,1,0);
 	}
+	*/
 	
 	private void loadDatabase(File file) {
 		FileInputStream fileIn = null;
