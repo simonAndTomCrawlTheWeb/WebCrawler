@@ -21,8 +21,8 @@ public class Database {
 		linksAdded = new LinkedList<String>();
 	}
 	
-	public void addLink(int priority, String url) {
-		
+	public boolean addLink(int priority, String url) {
+		boolean added = false;
 		if(!linksAdded.contains(url)) {
 			if(linksToCrawl.containsKey(priority)) {
 				linksToCrawl.get(priority).add(url);
@@ -32,8 +32,10 @@ public class Database {
 				newList.add(url);
 				linksToCrawl.put(priority, newList);
 			}
+			linksAdded.add(url);
+			added = true;
 		}
-		linksAdded.add(url);
+		return added;
 	}
 	
 	public void addResult(String url) {

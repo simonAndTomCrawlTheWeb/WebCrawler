@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import org.jsoup.Jsoup;
@@ -20,7 +21,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  *
  */
 public abstract class WebCrawler {
-	//private HTMLread reader = new HTMLreadImpl(); DO WE NEED THIS?
+	private HTMLread reader = new HTMLreadImpl(); // DO WE NEED THIS?
 	private final static int DEFAULT_MAX_LINKS = 10;
 	private final static int DEFAULT_MAX_DEPTH = 100;
 	private final int maxDepth, maxLinks;
@@ -31,9 +32,15 @@ public abstract class WebCrawler {
 	}
 	
 	public WebCrawler(int maxDepth, int maxLinks) {
-		//Negative or zero input integers: what to do?
-		this.maxDepth = maxDepth; 
-		this.maxLinks = maxLinks;
+		//Negative or zero input integers: what to do? GOOD QUESTION!!! Let's 2.0 it!
+		if(maxDepth > 0 && maxLinks > 0) {
+			this.maxDepth = maxDepth; 
+			this.maxLinks = maxLinks;
+		} else {
+			// If input dodgy, set to defaults
+			this.maxDepth = DEFAULT_MAX_DEPTH;
+			this.maxLinks = DEFAULT_MAX_LINKS;
+		}
 	}
 	
 	/*
@@ -43,7 +50,6 @@ public abstract class WebCrawler {
 	 * Currently it gets maxLinks non-unique links; maybe change.
 	 */
 	public final void crawl(String url,String dbFile) {
-		
 		File file = new File(dbFile); //What if dbFile is null? Handle NullPointerException?
 		if(file.exists() && file.isFile()) {
 			loadDatabase(file);	
@@ -51,54 +57,38 @@ public abstract class WebCrawler {
 			db = new Database();
 		}
 		
-		int numberOfLinksFound = 1; //Including url given to method as one of the links
-		int currentPriority = 0; //The url parameter is the only link with priority 0
-		int index = 0; //The index of the current link in linksToCrawl.get(currentPriority)
-		db.addLink(currentPriority,url); //Add url to links database
-
-		while (currentPriority <= maxDepth && numberOfLinksFound < maxLinks) { //Stops user-settings on depth and link number being exceeded
-			try {
-				Document htmlDoc = Jsoup.connect(url).get(); //Parse page (see Jsoup API)
-				Elements allATags = htmlDoc.select("a[href]"); //Find all 'a-tags' with an 'href'-attribute
-				int i = 0; //The index of allATags
-				while ((i < allATags.size()) && (numberOfLinksFound < maxLinks)) { //Stops maxLinks being exceeded and IndexOutOfBoundsExceptions on allATags
-					db.addLink(currentPriority+1,allATags.get(i).attr("abs:href").toString()); //Adds absolute address of links found (with relevant priority)
-					//System.out.println(allATags.get(i).attr("abs:href").toString());
-					numberOfLinksFound++;
-					i++;
-				}
-			} catch (IllegalArgumentException ex) {
-				System.out.println("That was not a valid url..."); //Should this be kept in the index?
-				//ex.printStackTrace();
-			} catch (IOException ex) {
-				System.out.println("There was an I/O problem...");
-				//ex.printStackTrace();
-			}
-			
-			/*
-			 * 'Future programmers' search functionality
-			 */
-			boolean result = search(url); //Do we always want to hand the url over to search? See exceptions above.
-			if (result) {
-				db.addResult(url);
-			}
-			
-			index++;
-			if (index == db.getLinksToCrawl().get(currentPriority).size()) { //Checks if we have crawled all the links in the current priority group
-				currentPriority++;
-				index = 0;
-				if (db.getLinksToCrawl().get(currentPriority) != null) { //Checks if there are any links of a higher priority that need to be crawled
-					url = db.getLinksToCrawl().get(currentPriority).get(index); //Update url-"to crawl" to first element of the next higher priority group
-				} else {
-					//There are no higher priority links to crawl
-					return;
-				}
+	}
+	
+	public List<String> getLinksFromPage(InputStream stream) {
+		List<String> links = new LinkedList<>();
+		boolean endOfTag = false;
+		boolean endOfPage = false;
+		while(!endOfPage) {
+			if(reader.readUntil(stream, '<', '\u001a')) {
+				String tag = reader.readString(stream, ' ', '>');
+				if(tag != null && tag.equalsIgnoreCase("a ")) {
+					// found anchor - now look for href...
+					while(!endOfTag) {
+						if(reader.readUntil(stream, 'h', '>')) {
+							String attr = reader.readString(stream, '"', '>');
+							if(attr != null && attr.equalsIgnoreCase("ref=\"")) {
+								// found the link URL
+								String newLink = reader.readString(stream, '"', '>');
+								if(newLink != null) {
+									links.add(newLink.substring(0, newLink.length() - 1)); // remove the " at end of url
+								}
+								endOfTag = true; // only one link per anchor
+							}	
+						} else {
+							endOfTag = true;
+						}
+					}		
+				}	
 			} else {
-				//Update url-"to crawl" to be the next element along in the current priority group
-				url = db.getLinksToCrawl().get(currentPriority).get(index);
+				endOfPage = true;
 			}
 		}
-		writeDatabase(db);
+		return links;
 	}
 	
 	
