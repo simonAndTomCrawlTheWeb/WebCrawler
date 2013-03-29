@@ -1,17 +1,25 @@
 package main;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Database implements Serializable {
-	private static final long serialVersionUID = 42L;
-	
+public class Database {
+	/*
+	 * Should we hide this class? Factory or singleton or inner or anonymous, etc.
+	 */
 	private Map<Integer, LinkedList<String>> linksToCrawl = new HashMap<Integer, LinkedList<String>>();
-	private List<String> linksAdded = new LinkedList<String>();
+	private List<String> linksAdded = null;
 	private List<String> results = new LinkedList<String>();
+	
+	public Database(List<String> inputData) {
+		linksAdded = inputData;
+	}
+	
+	public Database() {
+		linksAdded = new LinkedList<String>();
+	}
 	
 	public void addLink(int priority, String url) {
 		

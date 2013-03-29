@@ -1,19 +1,19 @@
 
 package main;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.XStreamException;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
  * @author tomAndSimon
@@ -63,7 +63,7 @@ public abstract class WebCrawler {
 				int i = 0; //The index of allATags
 				while ((i < allATags.size()) && (numberOfLinksFound < maxLinks)) { //Stops maxLinks being exceeded and IndexOutOfBoundsExceptions on allATags
 					db.addLink(currentPriority+1,allATags.get(i).attr("abs:href").toString()); //Adds absolute address of links found (with relevant priority)
-					System.out.println(allATags.get(i).attr("abs:href").toString());
+					//System.out.println(allATags.get(i).attr("abs:href").toString());
 					numberOfLinksFound++;
 					i++;
 				}
@@ -101,62 +101,36 @@ public abstract class WebCrawler {
 		writeDatabase(db);
 	}
 	
+	
+	/*
+	 * This reads the contents of the file supplied and puts it in linksAdded
+	 */
 	private void loadDatabase(File file) {
-		FileInputStream fileIn = null;
-		ObjectInputStream in = null;
-		
-		try {
-			fileIn = new FileInputStream(file);
-			in = new ObjectInputStream(fileIn);
-			db = (Database) in.readObject();
-		} catch (FileNotFoundException e) {
-			System.out.println("The file at " + file.getPath() + " does not exist, or cannot be opened...");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("There was an I/O problem...");
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			System.out.println("Database class could not be found...");
-			e.printStackTrace();
-		} finally {
-			if(fileIn != null) {
-				try {
-					fileIn.close();
-				} catch (IOException e) {
-					System.out.println("An I/O error has occurred...");
-					e.printStackTrace();
-				}
-			}
-			if(in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					System.out.println("An I/O error has occurred...");
-					e.printStackTrace();
-				}
-			}
+		XStream stream = new XStream(new DomDriver());
+		stream.alias("links", LinkedList.class);
+		stream.alias("url", String.class);
+		db = new Database((List<String>) stream.fromXML(file)); //This needs to be type checked; can do better with XML schema
+		for (String next: db.getLinksAdded()) {
+			System.out.println(next);
 		}
 	}
 	
 	/*
-	 * Simple quick write method.
-	 * Redo when we understand the proper spec.
+	 * This writes the contents of 'results' from the Database object to the file path supplied to crawl
 	 */
 	private void writeDatabase(Database db) {
-	    try	{
-	        OutputStream file = new FileOutputStream( "database.txt");
-	        OutputStream buffer = new BufferedOutputStream(file);
-	        ObjectOutput output = new ObjectOutputStream(buffer);
-	        try	{
-	        	output.writeObject(db);
-	        }
-	        finally	{
-	        	output.close();
-	        }
-	     } catch(IOException ex) {
-	    	 System.out.println("Could not write file...");
-	    	 ex.printStackTrace();
-	     }
+		XStream stream = new XStream(new DomDriver());
+		stream.alias("links", LinkedList.class);
+		stream.alias("url", String.class);
+		try {
+            FileOutputStream file = new FileOutputStream("database.txt");
+            stream.toXML(db.getResults(), file);
+        } catch (FileNotFoundException ex) {
+        	System.out.println("The file was not found!");
+            ex.printStackTrace();
+        } catch (XStreamException ex) {
+        	ex.printStackTrace();
+        }
 	}
 
 	abstract boolean search(String url);
