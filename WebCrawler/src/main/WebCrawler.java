@@ -63,15 +63,16 @@ public abstract class WebCrawler {
 				int i = 0; //The index of allATags
 				while ((i < allATags.size()) && (numberOfLinksFound < maxLinks)) { //Stops maxLinks being exceeded and IndexOutOfBoundsExceptions on allATags
 					db.addLink(currentPriority+1,allATags.get(i).attr("abs:href").toString()); //Adds absolute address of links found (with relevant priority)
+					System.out.println(allATags.get(i).attr("abs:href").toString());
 					numberOfLinksFound++;
 					i++;
 				}
 			} catch (IllegalArgumentException ex) {
 				System.out.println("That was not a valid url..."); //Should this be kept in the index?
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			} catch (IOException ex) {
 				System.out.println("There was an I/O problem...");
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}
 			
 			/*

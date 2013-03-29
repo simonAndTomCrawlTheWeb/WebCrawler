@@ -16,10 +16,12 @@ public class CrawlerDebugger {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		WebCrawler crawler = new MockWebCrawler(3,100);
+		WebCrawler crawler = new MockWebCrawler(2,300000);
 	    //crawler.crawl("http://en.wikipedia.org/wiki/Spider","WCTest.txt");
-	    crawler.crawl("https://github.com/simonAndTomCrawlTheWeb/WebCrawler","WCTest.txt");
+		System.out.println("Links:");
+	    crawler.crawl("http://www.samharris.com","WCTest.txt");
 	    Database myDb = crawler.getDatabase();
+	    /*
 	    Map<Integer, LinkedList<String>> linksToCrawl = myDb.getLinksToCrawl();
 	    LinkedList<String> priorityZero = linksToCrawl.get(0);
 	    LinkedList<String> priorityOne = linksToCrawl.get(1);		
@@ -32,15 +34,16 @@ public class CrawlerDebugger {
 	    for (String next: priorityOne) {
 	    	System.out.println("This is in priority 1:" + next);
 	    }
-	    /*
 	    LinkedList<String> priorityTwo = linksToCrawl.get(2);
 	    System.out.println("The size of the priority 2 linked list is:" + priorityTwo.size());
 	    System.out.println("***************");
 	    for (String each: priorityTwo) {
 	    	System.out.println("This is in priority 2:" + each);
 	    }
-	    
 	    System.out.println("***********Links in total list");
+	    */
+	    System.out.println("Total Links Found: " + myDb.getLinksAdded().size());
+	    /*
 	    for (String next: myDb.getLinksAdded()) {
 	    	System.out.println(next);
 	    }
