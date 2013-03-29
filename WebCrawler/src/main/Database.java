@@ -44,6 +44,10 @@ public class Database {
 		}
 	}
 	
+	public List<String> getLinksOfPriority(int priority) {
+		return linksToCrawl.get(priority);
+	}
+	
 	public Map<Integer, LinkedList<String>> getLinksToCrawl() {
 		return linksToCrawl;
 	}

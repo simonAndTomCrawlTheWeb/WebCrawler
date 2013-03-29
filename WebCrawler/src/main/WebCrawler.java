@@ -6,12 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -57,6 +55,38 @@ public abstract class WebCrawler {
 			db = new Database();
 		}
 		
+		int currentPriority = 0;
+		int linksProcessed = 0;
+		db.addLink(currentPriority, url);
+		
+		while(currentPriority <= maxDepth && db.getLinksOfPriority(currentPriority) != null) {
+			List<String> linksAtThisDepth = db.getLinksOfPriority(currentPriority);
+			int size = linksAtThisDepth.size();
+			int index = 0;
+			while(linksProcessed <= maxLinks && index < size) {
+				// grab links from the current page
+				URL site;
+				try {
+					site = new URL(url);
+					List<String> foundLinks = getLinksFromPage(site.openStream());
+					for(String link : foundLinks) {
+						db.addLink(currentPriority + 1, link);
+					}
+					// call user-defined search within try block to avoid calling on bad URLs
+					search(url);
+					linksProcessed++;
+					} catch (MalformedURLException e) {
+						System.out.println("URL " + url + " malformed");
+						e.printStackTrace();
+					} catch (IOException e) {
+						System.out.println("IO problem when accessing " + url);
+						e.printStackTrace();
+				}
+				url = linksAtThisDepth.get(index++);
+			}
+		currentPriority++;
+		}
+		writeDatabase(db);
 	}
 	
 	public List<String> getLinksFromPage(InputStream stream) {
@@ -95,6 +125,7 @@ public abstract class WebCrawler {
 	/*
 	 * This reads the contents of the file supplied and puts it in linksAdded
 	 */
+	@SuppressWarnings("unchecked")
 	private void loadDatabase(File file) {
 		XStream stream = new XStream(new DomDriver());
 		stream.alias("links", LinkedList.class);
