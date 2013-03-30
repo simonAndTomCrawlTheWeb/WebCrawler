@@ -115,7 +115,7 @@ public abstract class WebCrawler {
 	 * interprets them using the context of the given page, and returns them in a list.
 	 * If the given page cannot be connected to, returns a null list.
 	 */	
-	public List<String> getLinksFromPage(URL page) {
+	private List<String> getLinksFromPage(URL page) {
 		List<String> links = null;
 		InputStream stream;
 		try {
@@ -179,7 +179,7 @@ public abstract class WebCrawler {
 	 * This reads the contents of the file supplied and puts it in linksAdded
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadDatabase(File file) throws XStreamException {
+	private void loadDatabase(File file) throws XStreamException {
 		try{
 			XStream stream = new XStream(new DomDriver());
 			stream.alias("links", LinkedList.class);
@@ -193,7 +193,7 @@ public abstract class WebCrawler {
 	/*
 	 * This writes the contents of 'results' from the Database object to the file path supplied to crawl
 	 */
-	public void writeDatabase(File file) {
+	private void writeDatabase(File file) {
 		FileOutputStream fileOut = null;
 		try {
 			XStream stream = new XStream(new DomDriver());
@@ -221,30 +221,4 @@ public abstract class WebCrawler {
 	}
 
 	abstract boolean search(String url);
-	
-	/*
-	 * FOR TESTING ONLY!
-	 */
-	public Database getDatabase() { //Added NEW TESTING STUFF; WATCH THIS, MAY CREATE PROBLEMS.
-		if (db == null) {
-			db = new Database();
-		}
-		return db;
-	}
-	
-	public int getMaxDepth() {
-		return maxDepth;
-	}
-	
-	public int getMaxLinks() {
-		return maxLinks;
-	}
-	
-	public int getDefaultMaxDepth() {
-		return DEFAULT_MAX_DEPTH;
-	}
-	
-	public int getDefaultMaxLinks() {
-		return DEFAULT_MAX_LINKS;
-	}
 }
