@@ -10,6 +10,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.thoughtworks.xstream.InitializationException;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -47,9 +49,18 @@ public abstract class WebCrawler {
 	 * Currently it gets maxLinks non-unique links; maybe change.
 	 */
 	public final void crawl(String url, String dbFile) {
-		File file = new File(dbFile); //What if dbFile is null? Handle NullPointerException? 
-		if(file.exists() && file.isFile()) { // Check for empty
-			loadDatabase(file);	
+		if(url == null || dbFile == null) {
+			throw new IllegalArgumentException("Seed URL and database filename cannot be null");
+		}
+		File file = new File(dbFile); 
+		if(file.exists() && file.isFile() && !(file.length() == 0)) { // Check for empty
+			try {
+				loadDatabase(file);
+			} catch (XStreamException ex) {
+				System.out.println("Problem reading XML from " + dbFile +", please check it is of the correct format");
+				ex.printStackTrace();
+			}
+				
 		} else {
 			db = new Database();
 		}
@@ -58,8 +69,7 @@ public abstract class WebCrawler {
 		int linksProcessed = 0;
 		if(!db.addLink(currentPriority, url)) {
 			// Seed url is in the result list, ie. has been searched previously. As url is not distinct, quit
-			System.out.println("Seed URL " + url + " has been searched previously; try again with distinct seed");
-			return;
+			throw new IllegalArgumentException("Seed URL " + url + " has been searched previously; try again with distinct seed");
 		}
 		
 		while(currentPriority <= maxDepth && db.getLinksOfPriority(currentPriority) != null) {
@@ -169,29 +179,44 @@ public abstract class WebCrawler {
 	 * This reads the contents of the file supplied and puts it in linksAdded
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadDatabase(File file) {
-		XStream stream = new XStream(new DomDriver());
-		stream.alias("links", LinkedList.class);
-		stream.alias("url", String.class);
-		db = new Database((List<String>) stream.fromXML(file)); //This needs to be type checked; can do better with XML schema
-		// catch exceptions and deal with (ie garbage in file)
+	public void loadDatabase(File file) throws XStreamException {
+		try{
+			XStream stream = new XStream(new DomDriver());
+			stream.alias("links", LinkedList.class);
+			stream.alias("url", String.class);
+			db = new Database((List<String>) stream.fromXML(file)); //This needs to be type checked; can do better with XML schema
+		} catch (InitializationException ex) {
+			throw new XStreamException(ex);
+		}
 	}
 	
 	/*
 	 * This writes the contents of 'results' from the Database object to the file path supplied to crawl
 	 */
 	public void writeDatabase(File file) {
-		XStream stream = new XStream(new DomDriver());
-		stream.alias("links", LinkedList.class);
-		stream.alias("url", String.class);
+		FileOutputStream fileOut = null;
 		try {
-            FileOutputStream fileOut = new FileOutputStream(file);
-            stream.toXML(db.getResults(), fileOut);
-        } catch (FileNotFoundException ex) {        //////These catches aren't dealing with the problem!
-        	System.out.println("The file: " + file.getPath() + " was not found!");
-            ex.printStackTrace();
-        } catch (XStreamException ex) {
+			XStream stream = new XStream(new DomDriver());
+			stream.alias("links", LinkedList.class);
+			stream.alias("url", String.class);
+			fileOut = new FileOutputStream(file);
+         	stream.toXML(db.getResults(), fileOut);
+        } catch (FileNotFoundException ex) {        
+        	System.out.println("The file: " + file.getPath() + " either cannot be created or cannot be opened! Please check directory.");
+        } catch (InitializationException ex) {
+        	System.out.println("There was a problem with the parser. It cannot be accessed.");
         	ex.printStackTrace();
+        } catch (XStreamException ex) {
+        	System.out.println("There was a problem with the parser. It cannot write the XML.");
+        	ex.printStackTrace();
+        } finally {
+        	if(fileOut != null) {
+        		try {
+					fileOut.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
         }
 	}
 
@@ -200,7 +225,10 @@ public abstract class WebCrawler {
 	/*
 	 * FOR TESTING ONLY!
 	 */
-	public Database getDatabase() {
+	public Database getDatabase() { //Added NEW TESTING STUFF; WATCH THIS, MAY CREATE PROBLEMS.
+		if (db == null) {
+			db = new Database();
+		}
 		return db;
 	}
 	

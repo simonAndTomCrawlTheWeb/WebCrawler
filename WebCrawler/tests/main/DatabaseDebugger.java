@@ -11,7 +11,6 @@ public class DatabaseDebugger {
 	public static void main(String[] args) {
 		WebCrawler crawler = new MockWebCrawler();
 		File file = new File("dataTest.txt");
-		crawler.loadDatabase(file);
 		Database db = crawler.getDatabase();
 		List<String> linksAddedList = db.getLinksAdded();
 		if (linksAddedList.size() == 0) {
@@ -19,7 +18,7 @@ public class DatabaseDebugger {
 		} else {
 			System.out.println("Not empty");
 		}
-		//db.addResult("http://www.checkthis.com");
+		db.addResult("http://www.checkthis.com");
 		db.addResult("yo");
 		crawler.writeDatabase(file);
 	}
