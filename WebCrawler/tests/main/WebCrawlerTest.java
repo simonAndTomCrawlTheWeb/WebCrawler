@@ -5,11 +5,13 @@ package main;
 
 import static org.junit.Assert.*;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,6 +40,22 @@ public class WebCrawlerTest {
 	public final void testSearch() {
 		assertTrue(crawler.search(urlTrue));
 		assertFalse(crawler.search(urlFalse));
+	}
+	
+	@After
+	public void debug() throws Exception {
+		URL bbc = new URL("http://www.bbc.co.uk");
+		String rel = "www.bbc.co.uk";
+		String sci = "/science";
+		String sci2 = "science";
+		
+		URL url1 = new URL(bbc, rel);
+		URL url2 = new URL(bbc, sci);
+		URL url3 = new URL(bbc, sci2);
+		
+		System.out.println(url1.toString());
+		System.out.println(url2.toString());
+		System.out.println(url3.toString());
 	}
 	
 	@Test
