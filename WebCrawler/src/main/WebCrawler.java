@@ -30,11 +30,11 @@ public abstract class WebCrawler {
 	}
 	
 	public WebCrawler(int maxDepth, int maxLinks) {
-		if(maxDepth > 0 && maxLinks > 0) {
-			this.maxDepth = maxDepth; 
+		if(maxDepth >= 0 && maxLinks > 0) { // maxDepth can be zero (we take the seed url as depth = priority = 0
+			this.maxDepth = maxDepth; 		// maxLinks, however must be greater than zero, or crawl will do nothing
 			this.maxLinks = maxLinks;
 		} else {
-			// If input dodgy, set to defaults
+			// Set to defaults
 			this.maxDepth = DEFAULT_MAX_DEPTH;
 			this.maxLinks = DEFAULT_MAX_LINKS;
 		}
@@ -48,7 +48,7 @@ public abstract class WebCrawler {
 	 */
 	public final void crawl(String url, String dbFile) {
 		File file = new File(dbFile); //What if dbFile is null? Handle NullPointerException? 
-		if(file.exists() && file.isFile()) {
+		if(file.exists() && file.isFile()) { // Check for empty
 			loadDatabase(file);	
 		} else {
 			db = new Database();
@@ -56,16 +56,17 @@ public abstract class WebCrawler {
 		
 		int currentPriority = 0;
 		int linksProcessed = 0;
-		db.addLink(currentPriority, url);
+		if(!db.addLink(currentPriority, url)) {
+			// Seed url is in the result list, ie. has been searched previously. As url is not distinct, quit
+			System.out.println("Seed URL " + url + " has been searched previously; try again with distinct seed");
+			return;
+		}
 		
 		while(currentPriority <= maxDepth && db.getLinksOfPriority(currentPriority) != null) {
-			System.out.println("At depth " + currentPriority);////////DEBUG/////////////////////
-			
-			
 			List<String> linksAtThisDepth = db.getLinksOfPriority(currentPriority);
 			int size = linksAtThisDepth.size();
 			int index = 0;
-			while(linksProcessed <= maxLinks && index < size) {
+			while(linksProcessed < maxLinks && index < size) {
 				url = linksAtThisDepth.get(index);
 				// grab links from the current page
 				try {
@@ -83,9 +84,6 @@ public abstract class WebCrawler {
 						db.addResult(url);
 					}
 					linksProcessed++;
-					
-					System.out.println(linksProcessed);////////DEBUG/////////////////////
-					
 					} catch (MalformedURLException e) {
 						System.out.println("URL " + url + " malformed");
 					}
@@ -100,23 +98,18 @@ public abstract class WebCrawler {
 	 * Extracts all links from A tags on the given page, of the form <a * href="*" *>,
 	 * interprets them using the context of the given page, and returns them in a list.
 	 * If the given page cannot be connected to, returns a null list.
-	 */
-	private int test=0;////////DEBUG/////////////////////
-	
+	 */	
 	public List<String> getLinksFromPage(URL page) {
 		List<String> links = null;
 		InputStream stream;
 		try {
-			if(page.toString().equals("http://trace.ntu.ac.uk/mentors/madigan/colours.htm")) { //////THIS IS DEBUGG!!!!!!
-				return links;
-			}
 			stream = page.openStream();
 		} catch (IOException e1) {
 			System.out.println("Could not connect to " + page.toString());
 			return links;
-		}
+		}		
 		
-		System.out.println("link no." + (++test)); ////////DEBUG/////////////////////
+		System.out.println("Scraping: " + page);
 		
 		links = new LinkedList<>();
 		boolean endOfTag = false;
@@ -133,15 +126,23 @@ public abstract class WebCrawler {
 							if(attr != null && attr.equalsIgnoreCase("ref=\"")) {
 								// found the link URL
 								String longLink = reader.readString(stream, '"', '>');
-								String link = longLink.substring(0, longLink.length() -1); // trim the trailing " at end of longLink
-								if(link != null && link.charAt(0) != '#') {                // ignore links to the same page
-									try {
-										URL linkUrl = new URL(page, link);                 // interpret link in context of current page
-										links.add(linkUrl.toString());
-									} catch (MalformedURLException e) {
-										// Something's wrong with this link - let's ignore it
-										System.out.println("Ignoring malformed link " + link);
-									}               
+								if(longLink != null) {
+									String link = longLink.substring(0, longLink.length() -1); 	// trim the trailing " at end of longLink
+									link = link.trim();										   	// link address can be empty/whitespace to refer to current page - we should ignore these
+									
+								//	System.out.println("\tfound: "+link);
+									
+									if(!link.isEmpty()) {                
+										if(link.charAt(0) != '#') {								// ignore links to the same page
+											try {
+												URL linkUrl = new URL(page, link);              // interpret link in context of current page
+												links.add(linkUrl.toString().toLowerCase());
+											} catch (MalformedURLException e) {
+												// Something's wrong with this link - let's ignore it
+												System.out.println("Ignoring malformed link " + link);
+											} 
+										}
+									}
 								}
 								endOfTag = true; // only one link per anchor
 							}	
@@ -167,9 +168,7 @@ public abstract class WebCrawler {
 		stream.alias("links", LinkedList.class);
 		stream.alias("url", String.class);
 		db = new Database((List<String>) stream.fromXML(file)); //This needs to be type checked; can do better with XML schema
-		for (String next: db.getLinksAdded()) {
-			System.out.println(next); 
-		}
+		// catch exceptions and deal with (ie garbage in file)
 	}
 	
 	/*
@@ -182,7 +181,7 @@ public abstract class WebCrawler {
 		try {
             FileOutputStream fileOut = new FileOutputStream(file);
             stream.toXML(db.getResults(), fileOut);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {        //////These catches aren't dealing with the problem!
         	System.out.println("The file: " + file.getPath() + " was not found!");
             ex.printStackTrace();
         } catch (XStreamException ex) {
@@ -197,5 +196,21 @@ public abstract class WebCrawler {
 	 */
 	public Database getDatabase() {
 		return db;
+	}
+	
+	public int getMaxDepth() {
+		return maxDepth;
+	}
+	
+	public int getMaxLinks() {
+		return maxLinks;
+	}
+	
+	public int getDefaultMaxDepth() {
+		return DEFAULT_MAX_DEPTH;
+	}
+	
+	public int getDefaultMaxLinks() {
+		return DEFAULT_MAX_LINKS;
 	}
 }

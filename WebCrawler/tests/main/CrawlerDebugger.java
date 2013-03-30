@@ -3,9 +3,6 @@
  */
 package main;
 
-import java.util.LinkedList;
-import java.util.Map;
-
 /**
  * @author tohaga01
  *
@@ -16,10 +13,8 @@ public class CrawlerDebugger {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		WebCrawler crawler = new MockWebCrawler(2,30000);
-	    //crawler.crawl("http://en.wikipedia.org/wiki/Spider","WCTest.txt");
-		System.out.println("Links:");
-	    crawler.crawl("http://www.nyt.com","database.txt");
+		WebCrawler crawler = new MockWebCrawler(2,300);
+	    crawler.crawl("http://www.bbc.co.uk","WCTest.txt");
 	    /*
 	    Database myDb = crawler.getDatabase();
 	    Map<Integer, LinkedList<String>> linksToCrawl = myDb.getLinksToCrawl();

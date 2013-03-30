@@ -11,14 +11,16 @@ public class Database {
 	 */
 	private Map<Integer, LinkedList<String>> linksToCrawl = new HashMap<Integer, LinkedList<String>>();
 	private List<String> linksAdded = null;
-	private List<String> results = new LinkedList<String>();
+	private List<String> results = null;
 	
 	public Database(List<String> inputData) {
 		linksAdded = inputData;
+		results = inputData;
 	}
 	
 	public Database() {
 		linksAdded = new LinkedList<String>();
+		results = new LinkedList<String>();
 	}
 	
 	public boolean addLink(int priority, String url) {

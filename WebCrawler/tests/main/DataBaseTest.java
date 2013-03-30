@@ -33,27 +33,12 @@ public class DataBaseTest {
 		db.addResult(url);
 		assertTrue(db.getResults().contains(url));
 	}
-	/*
+	
 	@Test
-	public final void testSerialization() throws Exception {
+	public void testGetLinksOfPriorityWhenEmpty() {
 		db.addLink(0, url);
-		db.addResult(url);
-		
-		FileOutputStream fileOut = new FileOutputStream(file);
-		ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		out.writeObject(db);
-		
-		FileInputStream fileIn = new FileInputStream(file);
-		ObjectInputStream in = new ObjectInputStream(fileIn);
-		Database dbDeserialized = (Database) in.readObject();
-		
-		assertTrue(dbDeserialized.getLinksToCrawl().get(0).contains(url));
-		assertTrue(dbDeserialized.getResults().contains(url));
-		
-		fileOut.close();
-		out.close();
-		fileIn.close();
-		in.close();
+		assertNotNull(db.getLinksOfPriority(0));
+		assertNull(db.getLinksOfPriority(5));
 	}
-	*/
+	
 }
