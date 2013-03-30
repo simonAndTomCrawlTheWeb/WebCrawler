@@ -35,15 +35,9 @@ public class WebCrawlerTest {
 		simpleUrl = "http://www.york.ac.uk/teaching/cws/wws/webpage1.html";
 		testDb = "WCTest.txt";
 	}
-
-	@Test
-	public final void testSearch() {
-		assertTrue(crawler.search(urlTrue));
-		assertFalse(crawler.search(urlFalse));
-	}
 	
 	@After
-	public void debug() throws Exception {
+	public void testy() throws Exception {
 		URL bbc = new URL("http://www.bbc.co.uk");
 		String rel = "www.bbc.co.uk";
 		String sci = "/science";
@@ -56,6 +50,12 @@ public class WebCrawlerTest {
 		System.out.println(url1.toString());
 		System.out.println(url2.toString());
 		System.out.println(url3.toString());
+	}
+	
+	@Test
+	public final void testSearch() {
+		assertTrue(crawler.search(urlTrue));
+		assertFalse(crawler.search(urlFalse));
 	}
 	
 	@Test
