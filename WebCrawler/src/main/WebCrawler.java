@@ -20,7 +20,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public abstract class WebCrawler {
 	private HTMLread reader = new HTMLreadImpl(); 
-	private final static int DEFAULT_MAX_LINKS = 5;
+	private final static int DEFAULT_MAX_LINKS = 13;
 	private final static int DEFAULT_MAX_DEPTH = 3;
 	private final int maxDepth, maxLinks;
 	private Database db;
@@ -59,6 +59,9 @@ public abstract class WebCrawler {
 		db.addLink(currentPriority, url);
 		
 		while(currentPriority <= maxDepth && db.getLinksOfPriority(currentPriority) != null) {
+			System.out.println("At depth " + currentPriority);////////DEBUG/////////////////////
+			
+			
 			List<String> linksAtThisDepth = db.getLinksOfPriority(currentPriority);
 			int size = linksAtThisDepth.size();
 			int index = 0;
@@ -69,10 +72,10 @@ public abstract class WebCrawler {
 					URL site = new URL(url);
 					List<String> foundLinks = getLinksFromPage(site);
 					if(foundLinks == null) { // unable to open site at url, move on
+						index++;
 						continue;
 					}
 					for(String link : foundLinks) {
-						System.out.println("Adding link to DB: " + link);
 						db.addLink(currentPriority + 1, link);
 					}
 					// call user-defined search within try block to avoid calling on bad URLs
@@ -80,9 +83,11 @@ public abstract class WebCrawler {
 						db.addResult(url);
 					}
 					linksProcessed++;
+					
+					System.out.println(linksProcessed);////////DEBUG/////////////////////
+					
 					} catch (MalformedURLException e) {
 						System.out.println("URL " + url + " malformed");
-						//e.printStackTrace();
 					}
 				index++;
 			}
@@ -94,16 +99,26 @@ public abstract class WebCrawler {
 	/*
 	 * Extracts all links from A tags on the given page, of the form <a * href="*" *>,
 	 * interprets them using the context of the given page, and returns them in a list.
+	 * If the given page cannot be connected to, returns a null list.
 	 */
+	private int test=0;////////DEBUG/////////////////////
+	
 	public List<String> getLinksFromPage(URL page) {
-		List<String> links = new LinkedList<>();
+		List<String> links = null;
 		InputStream stream;
 		try {
+			if(page.toString().equals("http://trace.ntu.ac.uk/mentors/madigan/colours.htm")) { //////THIS IS DEBUGG!!!!!!
+				return links;
+			}
 			stream = page.openStream();
 		} catch (IOException e1) {
 			System.out.println("Could not connect to " + page.toString());
 			return links;
 		}
+		
+		System.out.println("link no." + (++test)); ////////DEBUG/////////////////////
+		
+		links = new LinkedList<>();
 		boolean endOfTag = false;
 		boolean endOfPage = false;
 		while(!endOfPage) {
@@ -153,7 +168,7 @@ public abstract class WebCrawler {
 		stream.alias("url", String.class);
 		db = new Database((List<String>) stream.fromXML(file)); //This needs to be type checked; can do better with XML schema
 		for (String next: db.getLinksAdded()) {
-			System.out.println(next);
+			System.out.println(next); 
 		}
 	}
 	

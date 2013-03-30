@@ -40,7 +40,6 @@ public class WebCrawlerTest {
 		assertFalse(crawler.search(urlFalse));
 	}
 	
-	/*
 	@Test
 	public void testCrawlerSimplePage() {
 		crawler.crawl(simpleUrl, testDb);
@@ -52,7 +51,7 @@ public class WebCrawlerTest {
 		assertEquals(2, priorityOne.size());
 		assertEquals(8, priorityTwo.size());
 	}
-	*/
+	/*
 	//Just realised it was silly to base a test on a Wikipedia page. Very likely to change its content. Check source if test fails unexpectedly.
 	@Test
 	public final void testCrawlSimpleEmptyFile() {
@@ -88,5 +87,6 @@ public class WebCrawlerTest {
 	    assertTrue(priorityOne.get(2).equals("http://en.wikipedia.org/wiki/Spider_(disambiguation)"));
 	    assertTrue(priorityOne.get(5).equals("http://en.wikipedia.org/wiki/Cambrian"));
 	    assertFalse(priorityOne.get(7).equals("http://en.wikipedia.org/apple-touch-icon.png"));
-	}	
+	}
+	*/
 }
