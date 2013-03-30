@@ -37,6 +37,8 @@ public abstract class WebCrawler {
 			this.maxLinks = maxLinks;
 		} else {
 			// Set to defaults
+			System.out.println("Maximum depth and maximum no. of links to search have minimum values of 0 and 1 respectively (ie. when just the seed URL is searched); setting to default values:");
+			System.out.println("\tmax depth = " + DEFAULT_MAX_DEPTH + "\tmax links = " + DEFAULT_MAX_LINKS);
 			this.maxDepth = DEFAULT_MAX_DEPTH;
 			this.maxLinks = DEFAULT_MAX_LINKS;
 		}
