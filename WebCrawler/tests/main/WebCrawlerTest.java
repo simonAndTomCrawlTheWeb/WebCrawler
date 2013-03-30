@@ -5,7 +5,11 @@ package main;
 
 import static org.junit.Assert.*;
 
+import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,23 +40,23 @@ public class WebCrawlerTest {
 		assertFalse(crawler.search(urlFalse));
 	}
 	
+	/*
 	@Test
 	public void testCrawlerSimplePage() {
 		crawler.crawl(simpleUrl, testDb);
 		Database myDb = crawler.getDatabase();
 		List<String> priorityZero = myDb.getLinksOfPriority(0);
 		List<String> priorityOne = myDb.getLinksOfPriority(1);
-		//List<String> priorityTwo = myDb.getLinksOfPriority(2);
+		List<String> priorityTwo = myDb.getLinksOfPriority(2);
 		assertEquals(1, priorityZero.size());
 		assertEquals(2, priorityOne.size());
-		//assertEquals(8, priorityTwo.size());
+		assertEquals(8, priorityTwo.size());
 	}
-	
-	/*
+	*/
 	//Just realised it was silly to base a test on a Wikipedia page. Very likely to change its content. Check source if test fails unexpectedly.
 	@Test
 	public final void testCrawlSimpleEmptyFile() {
-	    crawler = new MockWebCrawler();
+	    crawler = new MockWebCrawler(1,20);
 	    crawler.crawl("http://en.wikipedia.org/wiki/Spider","WCTest.txt");
 	    Database myDb = crawler.getDatabase();
 	    Map<Integer, LinkedList<String>> linksToCrawl = myDb.getLinksToCrawl();
@@ -63,7 +67,7 @@ public class WebCrawlerTest {
 	    assertTrue(priorityOne.size()==19);
 	    assertTrue(priorityOne.get(0).equals("http://en.wikipedia.org/wiki/Spider#mw-head"));
 	    assertTrue(priorityOne.get(1).equals("http://en.wikipedia.org/wiki/Spider#p-search"));
-	    assertTrue(priorityOne.get(2).equals("http://en.wikipedia.org/wiki/Spider_(disambiguation)"));
+	    assertEquals("http://en.wikipedia.org/wiki/Spider_(disambiguation)", priorityOne.get(2));
 	    assertTrue(priorityOne.get(5).equals("http://en.wikipedia.org/wiki/Cambrian"));
 	    assertFalse(priorityOne.get(7).equals("http://en.wikipedia.org/apple-touch-icon.png"));
 	}
@@ -85,5 +89,4 @@ public class WebCrawlerTest {
 	    assertTrue(priorityOne.get(5).equals("http://en.wikipedia.org/wiki/Cambrian"));
 	    assertFalse(priorityOne.get(7).equals("http://en.wikipedia.org/apple-touch-icon.png"));
 	}	
-	*/
 }

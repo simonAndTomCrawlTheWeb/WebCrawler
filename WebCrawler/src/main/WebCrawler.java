@@ -63,11 +63,16 @@ public abstract class WebCrawler {
 			int size = linksAtThisDepth.size();
 			int index = 0;
 			while(linksProcessed <= maxLinks && index < size) {
+				url = linksAtThisDepth.get(index);
 				// grab links from the current page
 				try {
 					URL site = new URL(url);
-					List<String> foundLinks = getLinksFromPage(site.openStream());
+					List<String> foundLinks = getLinksFromPage(site);
+					if(foundLinks == null) { // unable to open site at url, move on
+						continue;
+					}
 					for(String link : foundLinks) {
+						System.out.println("Adding link to DB: " + link);
 						db.addLink(currentPriority + 1, link);
 					}
 					// call user-defined search within try block to avoid calling on bad URLs
@@ -78,19 +83,27 @@ public abstract class WebCrawler {
 					} catch (MalformedURLException e) {
 						System.out.println("URL " + url + " malformed");
 						//e.printStackTrace();
-					} catch (IOException e) {
-						System.out.println("IO problem when accessing " + url);
-						//e.printStackTrace();
-				}
-				url = linksAtThisDepth.get(index++);
+					}
+				index++;
 			}
 		currentPriority++;
 		}
 		writeDatabase(file);
 	}
 	
-	public List<String> getLinksFromPage(InputStream stream) {
+	/*
+	 * Extracts all links from A tags on the given page, of the form <a * href="*" *>,
+	 * interprets them using the context of the given page, and returns them in a list.
+	 */
+	public List<String> getLinksFromPage(URL page) {
 		List<String> links = new LinkedList<>();
+		InputStream stream;
+		try {
+			stream = page.openStream();
+		} catch (IOException e1) {
+			System.out.println("Could not connect to " + page.toString());
+			return links;
+		}
 		boolean endOfTag = false;
 		boolean endOfPage = false;
 		while(!endOfPage) {
@@ -104,9 +117,16 @@ public abstract class WebCrawler {
 							String attr = reader.readString(stream, '"', '>');
 							if(attr != null && attr.equalsIgnoreCase("ref=\"")) {
 								// found the link URL
-								String newLink = reader.readString(stream, '"', '>');
-								if(newLink != null) {
-									links.add(newLink.substring(0, newLink.length() - 1)); // remove the " at end of url
+								String longLink = reader.readString(stream, '"', '>');
+								String link = longLink.substring(0, longLink.length() -1); // trim the trailing " at end of longLink
+								if(link != null && link.charAt(0) != '#') {                // ignore links to the same page
+									try {
+										URL linkUrl = new URL(page, link);                 // interpret link in context of current page
+										links.add(linkUrl.toString());
+									} catch (MalformedURLException e) {
+										// Something's wrong with this link - let's ignore it
+										System.out.println("Ignoring malformed link " + link);
+									}               
 								}
 								endOfTag = true; // only one link per anchor
 							}	
