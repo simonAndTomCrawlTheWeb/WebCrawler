@@ -169,7 +169,7 @@ public abstract class WebCrawler {
 	 * This reads the contents of the file supplied and puts it in linksAdded
 	 */
 	@SuppressWarnings("unchecked")
-	private void loadDatabase(File file) {
+	public void loadDatabase(File file) {
 		XStream stream = new XStream(new DomDriver());
 		stream.alias("links", LinkedList.class);
 		stream.alias("url", String.class);
@@ -180,7 +180,7 @@ public abstract class WebCrawler {
 	/*
 	 * This writes the contents of 'results' from the Database object to the file path supplied to crawl
 	 */
-	private void writeDatabase(File file) {
+	public void writeDatabase(File file) {
 		XStream stream = new XStream(new DomDriver());
 		stream.alias("links", LinkedList.class);
 		stream.alias("url", String.class);
