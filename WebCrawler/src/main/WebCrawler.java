@@ -20,8 +20,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public abstract class WebCrawler {
 	private HTMLread reader = new HTMLreadImpl(); 
-	private final static int DEFAULT_MAX_LINKS = 13;
-	private final static int DEFAULT_MAX_DEPTH = 3;
+	private final static int DEFAULT_MAX_LINKS = 5;
+	private final static int DEFAULT_MAX_DEPTH = 2;
 	private final int maxDepth, maxLinks;
 	private Database db;
 	
