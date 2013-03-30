@@ -20,8 +20,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public abstract class WebCrawler {
 	private HTMLread reader = new HTMLreadImpl(); // DO WE NEED THIS?
-	private final static int DEFAULT_MAX_LINKS = 10;
-	private final static int DEFAULT_MAX_DEPTH = 100;
+	private final static int DEFAULT_MAX_LINKS = 5;
+	private final static int DEFAULT_MAX_DEPTH = 3;
 	private final int maxDepth, maxLinks;
 	private Database db;
 	
@@ -65,22 +65,23 @@ public abstract class WebCrawler {
 			int index = 0;
 			while(linksProcessed <= maxLinks && index < size) {
 				// grab links from the current page
-				URL site;
 				try {
-					site = new URL(url);
+					URL site = new URL(url);
 					List<String> foundLinks = getLinksFromPage(site.openStream());
 					for(String link : foundLinks) {
 						db.addLink(currentPriority + 1, link);
 					}
 					// call user-defined search within try block to avoid calling on bad URLs
-					search(url);
+					if(search(url)) {
+						db.addResult(url);
+					}
 					linksProcessed++;
 					} catch (MalformedURLException e) {
 						System.out.println("URL " + url + " malformed");
-						e.printStackTrace();
+						//e.printStackTrace();
 					} catch (IOException e) {
 						System.out.println("IO problem when accessing " + url);
-						e.printStackTrace();
+						//e.printStackTrace();
 				}
 				url = linksAtThisDepth.get(index++);
 			}
@@ -95,7 +96,9 @@ public abstract class WebCrawler {
 		boolean endOfPage = false;
 		while(!endOfPage) {
 			if(reader.readUntil(stream, '<', '\u001a')) {
-				String tag = reader.readString(stream, ' ', '>');
+				endOfTag = false;
+				//System.out.println("do");
+				String tag = reader.readString(stream, ' ', '>');  //Note from Tom: what if the whitespace is not encoded as a space; for example, as a tab (is this possible?). Is there a general code for whitespace (this exists in regex).
 				if(tag != null && tag.equalsIgnoreCase("a ")) {
 					// found anchor - now look for href...
 					while(!endOfTag) {
@@ -116,6 +119,7 @@ public abstract class WebCrawler {
 				}	
 			} else {
 				endOfPage = true;
+				System.out.println("blah");
 			}
 		}
 		return links;

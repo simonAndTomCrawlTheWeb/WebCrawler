@@ -24,14 +24,11 @@ public class MockWebCrawler extends WebCrawler {
 
 	@Override
 	boolean search(String url) {
-		/*
+		
 		if(url.toString().equals("http://en.wikipedia.org/wiki/Spider")) {
 			return true;
 		}
-		*/
-		//int next = myGenerator.nextInt();
-		//return (next % 2 == 0);
-		return true;
+		return false;
 	}
 
 }
