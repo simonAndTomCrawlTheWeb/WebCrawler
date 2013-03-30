@@ -77,7 +77,13 @@ public abstract class WebCrawler {
 						continue;
 					}
 					for(String link : foundLinks) {
-						db.addLink(currentPriority + 1, link);
+						
+						
+						if(db.addLink(currentPriority + 1, link)) {
+							System.out.println("\tadded link:" + link);
+						}
+						
+						
 					}
 					// call user-defined search within try block to avoid calling on bad URLs
 					if(search(url)) {
