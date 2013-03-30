@@ -5,10 +5,7 @@ package main;
 
 import static org.junit.Assert.*;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,7 +42,7 @@ public class WebCrawlerTest {
 		Database myDb = crawler.getDatabase();
 		List<String> priorityZero = myDb.getLinksOfPriority(0);
 		List<String> priorityOne = myDb.getLinksOfPriority(1);
-		List<String> priorityTwo = myDb.getLinksOfPriority(2);
+		//List<String> priorityTwo = myDb.getLinksOfPriority(2);
 		assertEquals(1, priorityZero.size());
 		assertEquals(2, priorityOne.size());
 		//assertEquals(8, priorityTwo.size());

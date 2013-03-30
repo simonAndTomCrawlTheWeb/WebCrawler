@@ -3,7 +3,7 @@
  */
 package main;
 
-import java.util.Random;
+//import java.util.Random;
 
 /**
  * An mock implementation of search() for use in testing.
@@ -12,7 +12,7 @@ import java.util.Random;
  *
  */
 public class MockWebCrawler extends WebCrawler {
-	private Random myGenerator = new Random();
+	//private Random myGenerator = new Random();
 	
 	public MockWebCrawler() {
 		super();

@@ -5,11 +5,6 @@ package main;
 
 import static org.junit.Assert.*;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +16,6 @@ public class DataBaseTest {
 	
 	private Database db;
 	private String url = "this/is/a/pretend/link";
-	private String file = "serializeTest.ser";
 	
 	@Before
 	public void setUp() {
@@ -39,7 +33,7 @@ public class DataBaseTest {
 		db.addResult(url);
 		assertTrue(db.getResults().contains(url));
 	}
-	
+	/*
 	@Test
 	public final void testSerialization() throws Exception {
 		db.addLink(0, url);
@@ -61,5 +55,5 @@ public class DataBaseTest {
 		fileIn.close();
 		in.close();
 	}
-	
+	*/
 }

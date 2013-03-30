@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  *
  */
 public abstract class WebCrawler {
-	private HTMLread reader = new HTMLreadImpl(); // DO WE NEED THIS?
+	private HTMLread reader = new HTMLreadImpl(); 
 	private final static int DEFAULT_MAX_LINKS = 5;
 	private final static int DEFAULT_MAX_DEPTH = 3;
 	private final int maxDepth, maxLinks;
@@ -30,7 +30,6 @@ public abstract class WebCrawler {
 	}
 	
 	public WebCrawler(int maxDepth, int maxLinks) {
-		//Negative or zero input integers: what to do? GOOD QUESTION!!! Let's 2.0 it!
 		if(maxDepth > 0 && maxLinks > 0) {
 			this.maxDepth = maxDepth; 
 			this.maxLinks = maxLinks;
@@ -47,8 +46,8 @@ public abstract class WebCrawler {
 	 * 
 	 * Currently it gets maxLinks non-unique links; maybe change.
 	 */
-	public final void crawl(String url,String dbFile) {
-		File file = new File(dbFile); //What if dbFile is null? Handle NullPointerException?
+	public final void crawl(String url, String dbFile) {
+		File file = new File(dbFile); //What if dbFile is null? Handle NullPointerException? 
 		if(file.exists() && file.isFile()) {
 			loadDatabase(file);	
 		} else {
@@ -87,7 +86,7 @@ public abstract class WebCrawler {
 			}
 		currentPriority++;
 		}
-		writeDatabase(db);
+		writeDatabase(file);
 	}
 	
 	public List<String> getLinksFromPage(InputStream stream) {
@@ -97,8 +96,7 @@ public abstract class WebCrawler {
 		while(!endOfPage) {
 			if(reader.readUntil(stream, '<', '\u001a')) {
 				endOfTag = false;
-				//System.out.println("do");
-				String tag = reader.readString(stream, ' ', '>');  //Note from Tom: what if the whitespace is not encoded as a space; for example, as a tab (is this possible?). Is there a general code for whitespace (this exists in regex).
+				String tag = reader.readString(stream, ' ', '>');  
 				if(tag != null && tag.equalsIgnoreCase("a ")) {
 					// found anchor - now look for href...
 					while(!endOfTag) {
@@ -119,7 +117,6 @@ public abstract class WebCrawler {
 				}	
 			} else {
 				endOfPage = true;
-				System.out.println("blah");
 			}
 		}
 		return links;
@@ -143,15 +140,15 @@ public abstract class WebCrawler {
 	/*
 	 * This writes the contents of 'results' from the Database object to the file path supplied to crawl
 	 */
-	private void writeDatabase(Database db) {
+	private void writeDatabase(File file) {
 		XStream stream = new XStream(new DomDriver());
 		stream.alias("links", LinkedList.class);
 		stream.alias("url", String.class);
 		try {
-            FileOutputStream file = new FileOutputStream("database.txt");
-            stream.toXML(db.getResults(), file);
+            FileOutputStream fileOut = new FileOutputStream(file);
+            stream.toXML(db.getResults(), fileOut);
         } catch (FileNotFoundException ex) {
-        	System.out.println("The file was not found!");
+        	System.out.println("The file: " + file.getPath() + " was not found!");
             ex.printStackTrace();
         } catch (XStreamException ex) {
         	ex.printStackTrace();
