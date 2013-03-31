@@ -98,6 +98,10 @@ public abstract class WebCrawler {
 					}
 					linksProcessed++;
 					} catch (MalformedURLException e) {
+						if(currentPriority == 0) {
+						// seed URL was bad
+							throw new IllegalArgumentException("Seed URL malformed");
+						}
 						System.out.println("URL " + url + " malformed");
 					}
 				index++;				

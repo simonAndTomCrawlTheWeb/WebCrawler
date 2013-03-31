@@ -106,4 +106,10 @@ public class SimonsWebCrawlerTest {
 		
 		crawler.crawl("http://www.bbc.co.uk/", "premadeDb.txt");
 	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testDodgySeed() {
+		String dodgy = "this is a dodgy url";
+		crawler.crawl(dodgy, "blah.txt");
+	}
 }
