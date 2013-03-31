@@ -16,12 +16,13 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import static main.HTMLread.*;
+
 /**
  * @author tomAndSimon
  *
  */
 public abstract class WebCrawler {
-	private HTMLread reader = new HTMLreadImpl(); 
 	private final static int DEFAULT_MAX_LINKS = 5;
 	private final static int DEFAULT_MAX_DEPTH = 2;
 	private final int maxDepth, maxLinks;
@@ -186,17 +187,17 @@ public abstract class WebCrawler {
 		boolean endOfTag = false;
 		boolean endOfPage = false;
 		while(!endOfPage) {
-			if(reader.readUntil(stream, '<', '\u001a')) {
+			if(readUntil(stream, '<', '\u001a')) {
 				endOfTag = false;
-				String tag = reader.readString(stream, ' ', '>');  
+				String tag = readString(stream, ' ', '>');  
 				if(tag != null && tag.equalsIgnoreCase("a ")) {
 					// found anchor - now look for href...
 					while(!endOfTag) {
-						if(reader.readUntil(stream, 'h', '>')) {
-							String attr = reader.readString(stream, '"', '>');
+						if(readUntil(stream, 'h', '>')) {
+							String attr = readString(stream, '"', '>');
 							if(attr != null && attr.equalsIgnoreCase("ref=\"")) {
 								// found the link URL
-								String longLink = reader.readString(stream, '"', '>');
+								String longLink = readString(stream, '"', '>');
 								if(longLink != null) {
 									String link = longLink.substring(0, longLink.length() -1); 	// trim the trailing " at end of longLink
 									link = link.trim();										   	// link address can be empty/whitespace to refer to current page - we should ignore these									

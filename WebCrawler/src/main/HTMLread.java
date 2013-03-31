@@ -1,15 +1,17 @@
-
+/**
+ * 
+ */
 package main;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * A class to contain methods for parsing HTML commands from a stream.
- * 
- * @author tomAndSimon 
+ * @author tomAndSimon
+ *
  */
-public interface HTMLread {
-	
+public class HTMLread {
+
 	/**
 	 * Consumes characters from the given InputStream and stops when either a
 	 * character that is the same as ch1 or ch2 is encountered (ignoring case).
@@ -22,8 +24,28 @@ public interface HTMLread {
 	 * @param ch2 the character to terminate on
 	 * @return whether or not ch1 was encountered (ignoring case)
 	 */
-	boolean readUntil(InputStream stream,char ch1,char ch2);
-	
+	public static boolean readUntil(InputStream stream, char ch1, char ch2) {
+		char nextCharacter;
+		boolean result = false;
+		int byteRead;
+		try {
+			while ((byteRead = stream.read()) != -1) {
+				nextCharacter = Character.toLowerCase((char) byteRead);
+				if (nextCharacter == Character.toLowerCase(ch1)) {
+					result = true;
+					break;
+				} 
+				if (nextCharacter == Character.toLowerCase(ch2)) {
+					break;
+				}
+			}
+		} catch (IOException ex) {
+			System.out.println("IO exception reading HTML...");
+			ex.printStackTrace();
+		}
+		return result;
+	}
+
 	/**
 	 * Consumes up to, and including, the first non-whitespace character on the 
 	 * given InputStream or up to and including the given character.
@@ -36,8 +58,30 @@ public interface HTMLread {
 	 * @return the first non-whitespace character, or the smallest char value if ch
 	 * was encountered
 	 */
-	char skipSpace(InputStream stream,char ch);
-	
+	public static char skipSpace(InputStream stream, char ch) {
+		char nextCharacter;
+		char result = Character.MIN_VALUE;
+		int byteRead;
+		try {
+			while ((byteRead = stream.read()) != -1) {
+				nextCharacter = Character.toLowerCase((char) byteRead);
+				if(Character.isWhitespace(nextCharacter)) {
+					continue;
+				} else {
+					if (nextCharacter == ch) {
+						break;
+					}
+					result = nextCharacter;
+					break;
+				}
+			}
+		} catch (IOException ex) {
+			System.out.println("IO exception reading HTML...");
+			ex.printStackTrace();
+		}
+		return result;
+	}
+
 	/**
 	 * Consumes characters on the given InputStream and stops when either a character
 	 * that is the same as one of the given characters, ch1 and ch2, is encountered, 
@@ -52,5 +96,29 @@ public interface HTMLread {
 	 * @param ch2 the character to terminate on
 	 * @return the String of characters read ending in ch1, or null if ch2 is read
 	 */
-	String readString(InputStream stream,char ch1,char ch2);
+	public static String readString(InputStream stream, char ch1, char ch2) {
+		boolean foundCh1 = false;
+		StringBuilder whatIsRead = new StringBuilder();
+		char nextCharacter;
+		try {
+			while ((nextCharacter = (char) stream.read()) != -1) {
+				whatIsRead.append(nextCharacter);
+				if (nextCharacter == ch1) {
+					foundCh1 = true;
+					break;
+				} 
+				if (nextCharacter == ch2) {
+					break;
+				}
+			}
+		} catch (IOException ex) {
+			System.out.println("IO exception reading HTML...");
+			ex.printStackTrace();
+		} 	
+		if (foundCh1) {
+			return whatIsRead.toString();
+		}
+		return null;
+	}
 }
+

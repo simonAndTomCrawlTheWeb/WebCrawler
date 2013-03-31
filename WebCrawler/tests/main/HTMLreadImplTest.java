@@ -12,6 +12,8 @@ import java.net.URL;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import static main.HTMLread.*;
 /**
  * @author tomAndSimon
  *
@@ -22,7 +24,6 @@ public class HTMLreadImplTest {
 	public void readUntilTest() {
 		InputStream stream1 = null;
 		InputStream stream2 = null;
-		HTMLread myReader = new HTMLreadImpl(); 
 		try {
 			URL mySite1 = new URL("http://www.google.co.uk");
 			URL mySite2 = new URL("http://www.guardian.co.uk/");
@@ -33,8 +34,8 @@ public class HTMLreadImplTest {
 		} catch (IOException ex) {
 			System.out.println("IO problem...");		
 		}
-		boolean result1 = myReader.readUntil(stream1, 's', 'f');
-		boolean result2 = myReader.readUntil(stream2, 'l', 's');
+		boolean result1 = readUntil(stream1, 's', 'f');
+		boolean result2 = readUntil(stream2, 'l', 's');
 		assertTrue(result1);
 		assertTrue(result2);
 	}
@@ -43,7 +44,6 @@ public class HTMLreadImplTest {
 	public void readStringTest() {
 		InputStream stream1 = null;
 		InputStream stream2 = null;
-		HTMLread myReader = new HTMLreadImpl(); 
 		try {
 			URL mySite1 = new URL("http://www.google.co.uk");
 			URL mySite2 = new URL("http://www.telegraph.co.uk/");
@@ -54,8 +54,8 @@ public class HTMLreadImplTest {
 		} catch (IOException ex) {
 			System.out.println("IO problem...");		
 		}
-		String result1 = myReader.readString(stream1, 'i', 'z');
-		String result2 = myReader.readString(stream2, 'h', 'm');
+		String result1 = readString(stream1, 'i', 'z');
+		String result2 = readString(stream2, 'h', 'm');
 		assertEquals("<!doctype html><html i", result1);
 		assertEquals("<!DOCTYPE h", result2);
 	}
@@ -64,22 +64,20 @@ public class HTMLreadImplTest {
 	public void skipSpaceTest() throws Exception {
 		String str = "  x  ";
 		InputStream stream = new ByteArrayInputStream(str.getBytes());
-		HTMLread myReader = new HTMLreadImpl();
-		assertEquals('x', myReader.skipSpace(stream, 'y'));
+		assertEquals('x', skipSpace(stream, 'y'));
 	
 		stream = new ByteArrayInputStream(str.getBytes());
-		assertEquals(Character.MIN_VALUE, myReader.skipSpace(stream, 'x'));
+		assertEquals(Character.MIN_VALUE, skipSpace(stream, 'x'));
 	}
 
 	@Test
 	public void skipSpaceTest2() throws Exception {
-		HTMLread myReader = new HTMLreadImpl();
 		URL mySite = new URL("http://www.guardian.co.uk/"); // Helpfully provides ample whitespace ahead of first '<'
 		InputStream stream = mySite.openStream();
 		
-		assertEquals('<', myReader.skipSpace(stream, 'D'));
+		assertEquals('<', skipSpace(stream, 'D'));
 		
 		stream = mySite.openStream();
-		assertEquals(Character.MIN_VALUE, myReader.skipSpace(stream, '<'));
+		assertEquals(Character.MIN_VALUE, skipSpace(stream, '<'));
 		}
 }
