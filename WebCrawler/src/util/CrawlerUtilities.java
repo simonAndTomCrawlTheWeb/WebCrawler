@@ -13,8 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author tomAndSimon
  * A utilities class used by WebCrawler.
+ * @author tomAndSimon
  */
 public class CrawlerUtilities {
 	/*
