@@ -76,8 +76,9 @@ public class SimonsWebCrawlerTest {
 		if(notHere.exists()) {
 			notHere.delete();
 		} 
+		crawler = new SimonsMockWebCrawler(0, 1000);
 		assertFalse(notHere.exists());
-		crawler.crawl(urlTrue, "notHere.txt");
+		crawler.crawl("http://www.guardian.co.uk/", "notHere.txt");
 		assertTrue(notHere.exists());
 	}
 	

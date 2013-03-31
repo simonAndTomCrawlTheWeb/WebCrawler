@@ -1,8 +1,8 @@
 <links>
   <url>http://www.bbc.co.uk/privacy/cookies/bbc</url>
   <url>http://www.bbc.co.uk/</url>
+  <url>http://www.bbc.co.uk/privacy</url>
   <url>http://www.bbc.co.uk/privacy/cookies/managing/cookie-settings.html</url>
   <url>http://www.bbc.co.uk/accessibility/</url>
   <url>https://ssl.bbc.co.uk/id/status</url>
-  <url>http://www.bbc.co.uk/news/</url>
 </links>

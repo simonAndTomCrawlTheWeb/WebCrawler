@@ -49,12 +49,20 @@ public class CrawlerUtilities {
 					// found anchor - now look for href...
 					while(!endOfTag) {
 						if(readUntil(stream, 'h', '>')) {
-							String attr = readString(stream, '"', '>');
-							if(attr != null && attr.equalsIgnoreCase("ref=\"")) {
-								// found the link URL
-								String longLink = readString(stream, '"', '>');
+							String attr = readString(stream, '=', '>');
+							
+							if(attr != null && attr.replaceAll("\\s", "").equalsIgnoreCase("ref=")) {
+								// found the link URL -- need to find whether it's written '/like/this/' or "/like/this/"
+								char openQuote = skipSpace(stream, '>');
+								if(openQuote == Character.MIN_VALUE) {
+									// nothing between href= and >
+									endOfTag = true;
+									continue;
+								}
+								// read out the address
+								String longLink = readString(stream, openQuote, '>');
 								if(longLink != null) {
-									String link = longLink.substring(0, longLink.length() -1); 	// trim the trailing " at end of longLink
+									String link = longLink.substring(0, longLink.length() -1); 	// trim the trailing quote mark at end of longLink
 									link = link.trim();										   	// link address can be empty/whitespace to refer to current page - we should ignore these									
 									if(!link.isEmpty()) {                
 										if(link.charAt(0) != '#') {								// ignore links to the same page

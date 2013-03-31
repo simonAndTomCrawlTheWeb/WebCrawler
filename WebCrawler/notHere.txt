@@ -1,7 +1,3 @@
 <links>
-  <url>http://en.wikipedia.org/wiki/Spider</url>
-  <url>http://en.wikipedia.org/wiki/spider_(disambiguation)</url>
-  <url>http://en.wikipedia.org/wiki/wikipedia:protection_policy#semi</url>
-  <url>http://en.wikipedia.org/wiki/precambrian</url>
-  <url>http://en.wikipedia.org/wiki/cambrian</url>
+  <url>http://www.guardian.co.uk/</url>
 </links>
