@@ -61,20 +61,17 @@ public class SimonsWebCrawlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testSeedNotDistinct() {
-		System.out.println("SEED TEST");
 		oldCrawler = new MockWebCrawler(0,1);
 		oldCrawler.crawl("http://www.bbc.co.uk/", "seedNotUnique.txt");	
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testJunkDbfile() {
-		System.out.println("\nJUNK TEST");
 		crawler.crawl(urlTrue, "junkXML.txt");
 	}
 	
 	@Test
 	public void testDbfileNotExists() {
-		System.out.println("\nFILE NOT EXISTS");
 		File notHere = new File("notHere.txt");
 		if(notHere.exists()) {
 			notHere.delete();
@@ -86,7 +83,6 @@ public class SimonsWebCrawlerTest {
 	
 	@Test
 	public void testDbfileEmpty() throws Exception {
-		System.out.println("\nEMPTY FILE");
 		File empty = new File("empty.txt");
 		if(empty.exists()) {
 			empty.delete();
@@ -99,7 +95,6 @@ public class SimonsWebCrawlerTest {
 	
 	@Test
 	public void testLoadPrevDb() throws Exception {
-		System.out.println("\nPREMADE DB");
 		File proto = new File("premadeDbProto.txt");
 		File premade = new File("premadeDb.txt");
 		if(premade.exists()) {

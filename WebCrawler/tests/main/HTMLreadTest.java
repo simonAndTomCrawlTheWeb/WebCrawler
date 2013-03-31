@@ -18,7 +18,7 @@ import static main.HTMLread.*;
  * @author tomAndSimon
  *
  */
-public class HTMLreadImplTest {
+public class HTMLreadTest {
 
 	@Test
 	public void readUntilTest() {
