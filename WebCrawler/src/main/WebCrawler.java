@@ -58,11 +58,20 @@ public abstract class WebCrawler {
 		if(file.exists() && file.isFile() && !(file.length() == 0)) { // Check for empty
 			try {
 				loadDatabase(file);
+				System.out.println("***********************************");
+				System.out.println("After load linksAdded:");
+				for(String next : db.getLinksAdded()) {
+					System.out.println(next);
+				}
+				System.out.println("After load results:");
+				for(String next : db.getResults()) {
+					System.out.println(next);
+				}
+				System.out.println("***********************************");
+
 			} catch (XStreamException ex) {
-				System.out.println("Problem reading XML from " + dbFile +", please check it is of the correct format");
-				ex.printStackTrace();
-			}
-				
+				throw new IllegalArgumentException("Problem reading XML from " + dbFile +", please check it is of the correct format");
+			}	
 		} else {
 			db = new Database();
 		}
@@ -78,7 +87,19 @@ public abstract class WebCrawler {
 			List<String> linksAtThisDepth = db.getLinksOfPriority(currentPriority);
 			int size = linksAtThisDepth.size();
 			int index = 0;
+			System.out.println("************************");
+			System.out.println("Current depth = " + currentPriority);
+			System.out.println("No. of links at this depth = " + size);
+			System.out.println("No. of results = " + db.getResults().size());
+			System.out.println("Results so far:");
+			for(String next : db.getResults()) {
+				System.out.println(next);
+			}
+			System.out.println("************************");
 			while(linksProcessed < maxLinks && index < size) {
+				System.out.println("************************");
+				System.out.println("Processing link no. " + (index+1)+ " at depth " + currentPriority);
+				System.out.println("************************");
 				url = linksAtThisDepth.get(index);
 				// grab links from the current page
 				try {
@@ -88,27 +109,58 @@ public abstract class WebCrawler {
 						index++;
 						continue;
 					}
+					System.out.println("*****************************");
+					System.out.println("Adding found links to DB");
+					System.out.println("*****************************");
+
 					for(String link : foundLinks) {
-						
-						
-						if(db.addLink(currentPriority + 1, link)) {
-							System.out.println("\tadded link:" + link);
-						}
-						
-						
+						db.addLink(currentPriority + 1, link);
 					}
+					
+					System.out.println("*****************************");
+					System.out.println("links added now:");
+					System.out.println("*****************************");
+
+					for(String next : db.getLinksAdded()) {
+						System.out.println(next);
+					}
+					System.out.println("*****************************");
+					System.out.println("results now:");
+					System.out.println("*****************************");
+
+					for(String next : db.getResults()) {
+						System.out.println(next);
+					}
+					
 					// call user-defined search within try block to avoid calling on bad URLs
 					if(search(url)) {
+						
+						System.out.println("adding result: " + url);
+						
 						db.addResult(url);
 					}
 					linksProcessed++;
+					
+					System.out.println("************************");
+					System.out.println("No. of links processed =  "+linksProcessed);
+					System.out.println("No. of results = " + db.getResults().size());
+					System.out.println("************************");
+				
 					} catch (MalformedURLException e) {
 						System.out.println("URL " + url + " malformed");
 					}
-				index++;
+				index++;				
 			}
 		currentPriority++;
 		}
+		
+		System.out.println("***********************************");
+		System.out.println("RESULTS!");
+		for(String next : db.getResults()) {
+			System.out.println(next);
+		}
+		System.out.println("***********************************");
+		
 		writeDatabase(file);
 	}
 	
@@ -126,9 +178,10 @@ public abstract class WebCrawler {
 			System.out.println("Could not connect to " + page.toString());
 			return links;
 		}		
-		
+		System.out.println("*****************************************");
 		System.out.println("Scraping: " + page);
-		
+		System.out.println("*****************************************");
+
 		links = new LinkedList<>();
 		boolean endOfTag = false;
 		boolean endOfPage = false;
@@ -146,10 +199,7 @@ public abstract class WebCrawler {
 								String longLink = reader.readString(stream, '"', '>');
 								if(longLink != null) {
 									String link = longLink.substring(0, longLink.length() -1); 	// trim the trailing " at end of longLink
-									link = link.trim();										   	// link address can be empty/whitespace to refer to current page - we should ignore these
-									
-								//	System.out.println("\tfound: "+link);
-									
+									link = link.trim();										   	// link address can be empty/whitespace to refer to current page - we should ignore these									
 									if(!link.isEmpty()) {                
 										if(link.charAt(0) != '#') {								// ignore links to the same page
 											try {

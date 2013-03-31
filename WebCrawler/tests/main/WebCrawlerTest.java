@@ -33,7 +33,7 @@ public class WebCrawlerTest {
 		assertFalse(crawler.search(urlFalse));
 	}
 
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void testSeedNotDistinct() {
 		crawler = new MockWebCrawler(0,1);
 		crawler.crawl("http://www.bbc.co.uk", "seedNotUnique.txt");

@@ -10,17 +10,18 @@ public class Database {
 	 * Should we hide this class? Factory or singleton or inner or anonymous, etc.
 	 */
 	private Map<Integer, LinkedList<String>> linksToCrawl = new HashMap<Integer, LinkedList<String>>();
-	private List<String> linksAdded = null;
-	private List<String> results = null;
+	private List<String> linksAdded = new LinkedList<>();
+	private List<String> results = new LinkedList<>();
 	
 	public Database(List<String> inputData) {
-		linksAdded = inputData;
-		results = inputData;
+		this();
+		linksAdded.addAll(inputData);
+		results.addAll(inputData);
 	}
 	
 	public Database() {
-		linksAdded = new LinkedList<String>();
-		results = new LinkedList<String>();
+		linksAdded = new LinkedList<>();
+		results = new LinkedList<>();
 	}
 	
 	public boolean addLink(int priority, String url) {
@@ -28,8 +29,7 @@ public class Database {
 		if(!linksAdded.contains(url)) {
 			if(linksToCrawl.containsKey(priority)) {
 				linksToCrawl.get(priority).add(url);
-			}
-			else {
+			} else {
 				LinkedList<String> newList = new LinkedList<>();
 				newList.add(url);
 				linksToCrawl.put(priority, newList);
