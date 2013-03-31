@@ -17,11 +17,6 @@ import java.util.List;
  * @author tomAndSimon
  */
 public class CrawlerUtilities {
-	/*
-	 * Extracts all links from A tags on the given page, of the form <a * href="*" *>,
-	 * interprets them using the context of the given page, and returns them in a list.
-	 * If the given page cannot be connected to, returns a null list.
-	 */	
 	/**
 	 * Extracts all links from anchor tags on the given page, of the form <a * href="*" *>,
 	 * interprets them using the context of the given page, and returns them in a list.
@@ -45,7 +40,7 @@ public class CrawlerUtilities {
 			if(readUntil(stream, '<', '\u001a')) {
 				endOfTag = false;
 				String tag = readString(stream, ' ', '>');  
-				if(tag != null && tag.equalsIgnoreCase("a ")) {
+				if(tag != null && tag.replaceAll("\\s", "").equalsIgnoreCase("a")) {
 					// found anchor - now look for href...
 					while(!endOfTag) {
 						if(readUntil(stream, 'h', '>')) {
